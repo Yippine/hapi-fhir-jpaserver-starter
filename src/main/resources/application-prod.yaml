@@ -1,0 +1,94 @@
+# ===============================================================================
+# HAPI FHIR 生產環境配置
+# ===============================================================================
+# 此檔案定義生產環境特有的配置，會覆寫 application.yaml 的基礎配置
+# 使用方式：設定 SPRING_PROFILES_ACTIVE=prod
+#
+# 生產環境特性：
+# - 使用 PostgreSQL 資料庫
+# - 關閉 SQL 日誌（效能考量）
+# - 啟用嚴格驗證（確保資料品質）
+# - 關閉 MCP Server（生產環境不需要）
+# - 僅暴露必要的 Actuator 端點（安全考量）
+# - 鎖定 IG 版本（關閉運行時上傳，確保穩定性）
+# ===============================================================================
+
+# Management & Monitoring（生產環境僅暴露 health）
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: "health"
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Spring Configuration
+spring:
+  # MCP Server（生產環境關閉）
+  ai:
+    mcp:
+      server:
+        enabled: false
+
+  # 資料庫配置（使用 PostgreSQL）
+  datasource:
+    url: jdbc:postgresql://hapi-fhir-postgres:5432/hapi
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # JPA/Hibernate 配置
+  jpa:
+    properties:
+      hibernate:
+        # 生產環境關閉 SQL 日誌
+        format_sql: false
+        show_sql: false
+
+        # 使用 PostgreSQL Dialect
+        dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+
+        # DDL 策略
+        hbm2ddl:
+          auto: update
+
+        # 批次處理最佳化
+        jdbc:
+          batch_size: 20
+          fetch_size: 50
+
+# HAPI FHIR Configuration
+hapi:
+  fhir:
+    # 生產環境鎖定 IG 版本（關閉運行時上傳）
+    ig_runtime_upload_enabled: false
+
+    # 驗證配置（生產環境必須啟用）
+    validation:
+      requests_enabled: true
+      responses_enabled: true
+
+    # Narrative 生成（生產環境關閉，節省資源）
+    narrative_enabled: false
+
+    # Tester UI 配置
+    tester:
+      home:
+        name: Production Tester
+        server_address: 'http://localhost:8080/fhir'
+        refuse_to_fetch_third_party_urls: true
+        fhir_version: R4
+
+# Logging（生產環境簡化日誌）
+logging:
+  level:
+    ca.uhn.fhir: INFO
+    org.hibernate.SQL: WARN

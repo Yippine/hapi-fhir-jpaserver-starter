@@ -131,15 +131,7 @@ spring:
 
         # --- Hibernate Search (Lucene/Elasticsearch) ---
         search:
-          enabled: true
-          backend:
-            type: lucene
-            analysis:
-              configurer: ca.uhn.fhir.jpa.search.HapiHSearchAnalysisConfigurers$HapiLuceneAnalysisConfigurer
-            directory:
-              type: local-filesystem
-              root: target/lucenefiles
-            lucene_version: lucene_current
+          enabled: false
           # Lucene backend (default example)
           # backend:
           #   type: lucene
@@ -176,7 +168,7 @@ hapi:
     # -------------------------------------------------------------------------------
     # B. Implementation Guides (IG) & Package Install
     # -------------------------------------------------------------------------------
-    ig_runtime_upload_enabled: true
+    ig_runtime_upload_enabled: false
     # validate_resource_status_for_package_upload: false   # default true
     # install_transitive_ig_dependencies: true
     # implementationguides:
@@ -310,8 +302,9 @@ hapi:
     # G. Narrative & Validation
     # -------------------------------------------------------------------------------
     narrative_enabled: false
-    validation:
-      requests_enabled: true
+    # validation:
+    #   requests_enabled: true
+    #   responses_enabled: true
 
     # -------------------------------------------------------------------------------
     # H. MDM (Master Data Management)
@@ -323,8 +316,8 @@ hapi:
     # -------------------------------------------------------------------------------
     # I. Terminology / ValueSet Expansion
     # -------------------------------------------------------------------------------
-    pre_expand_value_sets: true
-    enable_task_pre_expand_value_sets: true
+    # pre_expand_value_sets: true
+    # enable_task_pre_expand_value_sets: true
     # pre_expand_value_sets_default_count: 1000
     # pre_expand_value_sets_max_count: 1000
     # maximum_expansion_size: 1000
