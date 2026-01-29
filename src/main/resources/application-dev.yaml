@@ -1,0 +1,84 @@
+# ===============================================================================
+# HAPI FHIR 開發環境配置
+# ===============================================================================
+# 此檔案定義開發環境特有的配置，會覆寫 application.yaml 的基礎配置
+# 使用方式：設定 SPRING_PROFILES_ACTIVE=dev
+#
+# 開發環境特性：
+# - 使用 H2 記憶體資料庫（快速啟動）
+# - 顯示 SQL 日誌（方便除錯）
+# - 關閉或寬鬆驗證（加快開發速度）
+# - 啟用 MCP Server（開發工具整合）
+# - 暴露更多 Actuator 端點（監控與除錯）
+# ===============================================================================
+
+# Management & Monitoring（開發環境暴露更多端點）
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus,env,configprops"
+  endpoint:
+    health:
+      show-details: always
+
+# Spring Configuration
+spring:
+  # MCP Server（開發環境啟用，方便 AI 工具整合）
+  ai:
+    mcp:
+      server:
+        enabled: true
+
+  # 資料庫配置（使用 H2 記憶體資料庫）
+  datasource:
+    url: jdbc:h2:mem:test_mem
+    username: sa
+    password: null
+    driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 10
+
+  # JPA/Hibernate 配置
+  jpa:
+    properties:
+      hibernate:
+        # 開發環境顯示 SQL（方便除錯）
+        format_sql: true
+        show_sql: true
+
+        # 使用 H2 Dialect
+        dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirH2Dialect
+
+        # DDL 自動更新
+        hbm2ddl:
+          auto: update
+
+# HAPI FHIR Configuration
+hapi:
+  fhir:
+    # 開發環境啟用 IG 運行時上傳（方便測試）
+    ig_runtime_upload_enabled: true
+
+    # 驗證配置（開發環境可以關閉或寬鬆）
+    validation:
+      requests_enabled: false   # 開發時關閉可加快速度
+
+    # Narrative 生成（開發時啟用，方便查看資源內容）
+    narrative_enabled: true
+
+    # Tester UI 配置
+    tester:
+      home:
+        name: Dev Tester
+        server_address: 'http://localhost:8080/fhir'
+        refuse_to_fetch_third_party_urls: false
+        fhir_version: R4
+
+# Logging（開發環境詳細日誌）
+logging:
+  level:
+    ca.uhn.fhir: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
