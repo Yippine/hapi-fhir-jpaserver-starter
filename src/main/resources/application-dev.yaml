@@ -31,12 +31,12 @@ spring:
       server:
         enabled: true
 
-  # 資料庫配置（使用 H2 記憶體資料庫）
+  # 資料庫配置（使用 PostgreSQL，與 MediCore Docker 架構一致）
   datasource:
-    url: jdbc:h2:mem:test_mem
-    username: sa
-    password: null
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB:fhir}
+    username: ${POSTGRES_USER:fhir}
+    password: ${POSTGRES_PASSWORD:fhir123}
+    driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
 
@@ -48,8 +48,8 @@ spring:
         format_sql: true
         show_sql: true
 
-        # 使用 H2 Dialect
-        dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirH2Dialect
+        # 使用 PostgreSQL Dialect
+        dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgres94Dialect
 
         # DDL 自動更新
         hbm2ddl:
