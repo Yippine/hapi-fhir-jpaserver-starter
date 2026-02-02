@@ -33,10 +33,11 @@ spring:
         enabled: false
 
   # 資料庫配置（使用 PostgreSQL）
+  # 主機名使用 Docker Compose 服務名 'postgres'（對應 fhir-postgres 容器）
   datasource:
-    url: jdbc:postgresql://hapi-fhir-postgres:5432/hapi
-    username: ${DB_USERNAME:admin}
-    password: ${DB_PASSWORD:admin}
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB:fhir}
+    username: ${POSTGRES_USER:fhir}
+    password: ${POSTGRES_PASSWORD:fhir123}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
