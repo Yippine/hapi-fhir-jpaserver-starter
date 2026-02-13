@@ -69,13 +69,13 @@ spring:
 # HAPI FHIR Configuration
 hapi:
   fhir:
-    # 生產環境鎖定 IG 版本（關閉運行時上傳）
-    ig_runtime_upload_enabled: false
+    # IG 運行時上傳（安全性由網路層控管：cloudflared + docs server auth）
+    ig_runtime_upload_enabled: true
 
-    # 驗證配置（生產環境必須啟用）
+    # 驗證配置（request 驗證確保寫入品質，response 驗證關閉避免 StackOverflow）
     validation:
       requests_enabled: true
-      responses_enabled: true
+      responses_enabled: false
 
     # Narrative 生成（生產環境關閉，節省資源）
     narrative_enabled: false
